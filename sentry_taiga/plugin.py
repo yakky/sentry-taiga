@@ -86,9 +86,7 @@ class TaigaPlugin(IssuePlugin):
             raise forms.ValidationError(_('Error Communicating '
                                         'with Taiga: %s') % (e,))
 
-        projects = tg.projects.list()
-        
-        project = projects.get(slug=project_slug)
+        project = projects.get_by_slug(slug=project_slug)
         if project is None:
             raise forms.ValidationError(_('No project found in Taiga with slug %s') % 
                                         (project_slug,))
