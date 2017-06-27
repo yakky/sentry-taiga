@@ -91,10 +91,6 @@ class TaigaPlugin(IssuePlugin):
             raise forms.ValidationError(_('No project found in Taiga with slug %s') % 
                                         (project_slug,))
 
-        if not project.is_issues_activated:
-            raise forms.ValidationError(_('Project %s has issues disabled.') % 
-                                        (project_slug,))
-
         default_us_status = project.default_us_status
 
         if default_us_status is None:
