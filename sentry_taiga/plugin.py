@@ -68,7 +68,7 @@ class TaigaPlugin(IssuePlugin):
         return bool(self.get_option('taiga_project', project))
 
     def get_new_issue_title(self, **kwargs):
-        return _('Create Taiga Issue')
+        return _('Create Taiga US')
 
     def create_issue(self, request, group, form_data, **kwargs):
 
@@ -97,33 +97,21 @@ class TaigaPlugin(IssuePlugin):
             raise forms.ValidationError(_('Project %s has issues disabled.') % 
                                         (project_slug,))
 
-        default_priority = project.default_priority
-        default_issue_status = project.default_issue_status
-        default_issue_type = project.default_issue_type
-        default_severity = project.default_severity
+        default_us_status = project.default_us_status
 
-        if default_priority is None:
-            raise forms.ValidationError(_('Project %s has no default priority. '
-                'Set the default priority in Taiga') % (project.name,))
-        if default_issue_status is None:
+        if default_us_status is None:
             raise forms.ValidationError(_('Project %s has no default status. '
-                'Set the default issue status in Taiga') % (project.name,))
-        if default_issue_type is None:
-            raise forms.ValidationError(_('Project %s has no default type. '
-                'Set the default issue type in Taiga') % (project.name,))
-        if default_severity is None:
-            raise forms.ValidationError(_('Project %s has no default severity. '
-                'Set the default severity in Taiga') % (project.name,))
+                'Set the default user story status in Taiga') % (project.name,))
 
-        data = {'subject': form_data['title'], 
-            'priority': default_priority, 'status': default_issue_status,
-            'issue_type': default_issue_type, 'severity': default_severity,
-            'description': form_data['description'], 
+        data = {
+            'subject': form_data['title'],
+            'status': default_us_status,
+            'description': form_data['description'],
             'tags': map(lambda x:x.strip(), labels.split(","))}
 
-        issue = project.add_issue(**data)
+        us = project.add_user_story(**data)
 
-        return issue.ref
+        return us.ref
 
 
     def get_issue_label(self, group, issue_id, **kwargs):
@@ -133,4 +121,4 @@ class TaigaPlugin(IssuePlugin):
         url = self.get_option('taiga_url', group.project)
         slug = self.get_option('taiga_project', group.project)
 
-        return '%s/project/%s/issue/%s' % (url, slug, issue_id)
+        return '%s/project/%s/us/%s' % (url, slug, issue_id)
