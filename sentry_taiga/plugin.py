@@ -18,7 +18,7 @@ class TaigaOptionsForm(forms.Form):
     taiga_url = forms.CharField(
         label=_('Taiga URL'),
         widget=forms.TextInput(attrs={'placeholder': 
-                                      'e.g. https://taiga.example.com'}),
+                                      'e.g. https://api.taiga.io'}),
         help_text=_('Enter the URL for your Taiga server'),
         required=True)
 
@@ -36,7 +36,7 @@ class TaigaOptionsForm(forms.Form):
 
     taiga_project = forms.CharField(
         label=_('Taiga Project Slug'),
-        widget=forms.TextInput(attrs={'placeholder': 'e.g. project-slug'}),
+        widget=forms.TextInput(attrs={'placeholder': 'e.g. https://tree.taiga.io/project/<project-slug>'}),
         help_text=_('Enter your project slug.'),
         required=True)
 
