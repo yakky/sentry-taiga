@@ -49,13 +49,13 @@ class TaigaOptionsForm(forms.Form):
 
 
 class TaigaPlugin(IssuePlugin):
-    author = 'RochSystems LLC'
-    author_url = 'http://rochsystems.com/'
+    author = 'Sentry'
+    author_url = 'http://sentry.io/'
     version = sentry_taiga.VERSION
     description = "Integrate Taiga issues by linking a repository to a project"
     resource_links = [
-        ('Bug Tracker', 'https://github.com/rochsystems/sentry-taiga/issues'),
-        ('Source', 'https://github.com/rochsystems/sentry-taiga'),
+        ('Bug Tracker', 'https://github.com/getsentry/sentry-taiga/issues'),
+        ('Source', 'https://github.com/getsentry/sentry-taiga'),
     ]
 
     slug = 'taiga'
@@ -68,7 +68,7 @@ class TaigaPlugin(IssuePlugin):
         return bool(self.get_option('taiga_project', project))
 
     def get_new_issue_title(self, **kwargs):
-        return _('Create Taiga US')
+        return _('Create Taiga User Story')
 
     def create_issue(self, request, group, form_data, **kwargs):
 

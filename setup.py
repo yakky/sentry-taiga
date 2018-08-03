@@ -24,9 +24,9 @@ install_requires = [
 setup(
     name='sentry-taiga',
     version=open('VERSION').read().strip(),
-    author='RochSystems LLC',
-    author_email='jordi.llonch@rochsystems.com',
-    url='http://github.com/rochsystems/sentry-taiga',
+    author='Sentry',
+    author_email='hello@sentry.io',
+    url='http://github.com/getsentry/sentry-taiga',
     description='A Sentry extension which integrates with Taiga.',
     long_description=__doc__,
     license='MIT',

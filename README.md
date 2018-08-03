@@ -1,6 +1,6 @@
 # Sentry Taiga
 
-A plugin for [Sentry](http://getsentry.com) which allows issue creation in your [Taiga](https://taiga.io) projects from errors.
+A plugin for [Sentry](http://sentry.io) which allows issue creation in your [Taiga](https://taiga.io) projects from errors.
 
 ## Install
 
