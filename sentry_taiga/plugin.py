@@ -101,7 +101,8 @@ class TaigaPlugin(IssuePlugin):
             'subject': form_data['title'],
             'status': default_us_status,
             'description': form_data['description'],
-            'tags': map(lambda x:x.strip(), labels.split(","))}
+            'tags': map(lambda x:x.strip(), labels.split(",")) if labels else None
+            }
 
         us = project.add_user_story(**data)
 
