@@ -36,7 +36,7 @@ class TaigaOptionsForm(forms.Form):
 
     taiga_project = forms.CharField(
         label=_('Taiga Project Slug'),
-        widget=forms.TextInput(attrs={'placeholder': 'e.g. https://tree.taiga.io/project/<project-slug>'}),
+        widget=forms.TextInput(attrs={'placeholder': 'e.g. project-slug'}),
         help_text=_('Enter your project slug.'),
         required=True)
 
