@@ -18,9 +18,18 @@ class TaigaOptionsForm(forms.Form):
     taiga_url = forms.CharField(
         label=_('Taiga URL'),
         widget=forms.TextInput(attrs={'placeholder': 
-                                      'e.g. https://api.taiga.io'}),
+                                      'e.g. https://tree.taiga.io'}),
         help_text=_('Enter the URL for your Taiga server'),
-        required=True)
+        required=True,
+        initial='https://tree.taiga.io')
+
+    taiga_api = forms.CharField(
+        label=_('Taiga API'),
+        widget=forms.TextInput(attrs={'placeholder': 
+                                      'e.g. https://api.taiga.io'}),
+        help_text=_('Enter the Taiga API URL'),
+        required=True,
+        initial='https://api.taiga.io')
 
     taiga_username = forms.CharField(
         label=_('Taiga User Name'),
@@ -73,12 +82,13 @@ class TaigaPlugin(IssuePlugin):
     def create_issue(self, request, group, form_data, **kwargs):
 
         url = self.get_option('taiga_url', group.project)
+        api = self.get_option('taiga_api', group.project)
         username = self.get_option('taiga_username', group.project)
         password = self.get_option('taiga_password', group.project)
         project_slug = self.get_option('taiga_project', group.project)
         labels = self.get_option('taiga_labels', group.project)
         
-        tg = TaigaAPI(host=url)
+        tg = TaigaAPI(host=api)
 
         try:
             tg.auth(username=username, password=password)
