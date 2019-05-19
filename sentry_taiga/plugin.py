@@ -17,7 +17,7 @@ import sentry_taiga
 class TaigaOptionsForm(forms.Form):
     taiga_url = forms.CharField(
         label=_('Taiga URL'),
-        widget=forms.TextInput(attrs={'placeholder': 
+        widget=forms.TextInput(attrs={'placeholder':
                                       'e.g. https://tree.taiga.io'}),
         help_text=_('Enter the URL for your Taiga server'),
         required=True,
@@ -25,7 +25,7 @@ class TaigaOptionsForm(forms.Form):
 
     taiga_api = forms.CharField(
         label=_('Taiga API'),
-        widget=forms.TextInput(attrs={'placeholder': 
+        widget=forms.TextInput(attrs={'placeholder':
                                       'e.g. https://api.taiga.io'}),
         help_text=_('Enter the Taiga API URL'),
         required=True,
@@ -77,7 +77,7 @@ class TaigaPlugin(IssuePlugin):
         return bool(self.get_option('taiga_project', project))
 
     def get_new_issue_title(self, **kwargs):
-        return _('Create Taiga User Story')
+        return _('Create Taiga Issue')
 
     def create_issue(self, request, group, form_data, **kwargs):
 
@@ -87,7 +87,7 @@ class TaigaPlugin(IssuePlugin):
         password = self.get_option('taiga_password', group.project)
         project_slug = self.get_option('taiga_project', group.project)
         labels = self.get_option('taiga_labels', group.project)
-        
+
         tg = TaigaAPI(host=api)
 
         try:
@@ -98,25 +98,33 @@ class TaigaPlugin(IssuePlugin):
 
         project = tg.projects.get_by_slug(slug=project_slug)
         if project is None:
-            raise forms.ValidationError(_('No project found in Taiga with slug %s') % 
+            raise forms.ValidationError(_('No project found in Taiga with slug %s') %
                                         (project_slug,))
 
-        default_us_status = project.default_us_status
+        default_issue_status = project.default_issue_status
+        priority = project.default_priority
+        issue_type = project.default_issue_type
+        severity = project.default_severity
 
-        if default_us_status is None:
+        if default_issue_status is None:
             raise forms.ValidationError(_('Project %s has no default status. '
-                'Set the default user story status in Taiga') % (project.name,))
+                'Set the default issue status in Taiga') % (project.name,))
 
+        if not labels:
+            labels = ''
         data = {
             'subject': form_data['title'],
-            'status': default_us_status,
+            'status': default_issue_status,
             'description': form_data['description'],
-            'tags': map(lambda x:x.strip(), labels.split(",")) if labels else None
+            'priority': priority,
+            'issue_type': issue_type,
+            'severity': severity,
+            'tags': [label.strip() for label in labels.split(",") if label]
             }
 
-        us = project.add_user_story(**data)
+        issue = project.add_issue(**data)
 
-        return us.ref
+        return issue.ref
 
 
     def get_issue_label(self, group, issue_id, **kwargs):
@@ -126,4 +134,4 @@ class TaigaPlugin(IssuePlugin):
         url = self.get_option('taiga_url', group.project)
         slug = self.get_option('taiga_project', group.project)
 
-        return '%s/project/%s/us/%s' % (url, slug, issue_id)
+        return '%s/project/%s/issue/%s' % (url, slug, issue_id)
