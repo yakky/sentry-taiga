@@ -49,6 +49,13 @@ class TaigaOptionsForm(forms.Form):
         help_text=_('Enter your project slug.'),
         required=True)
 
+    taiga_type = forms.ChoiceField(
+        label=_('Taiga object type'),
+        choices=(('issue', _('Issue')), ('us', _('User Story'))),
+        initial='issue',
+        help_text=_('Taiga object type to open.'),
+        required=True)
+
     taiga_labels = forms.CharField(
         label=_('Issue Labels'),
         widget=forms.TextInput(attrs={'placeholder': 'e.g. high, bug'}),
@@ -77,11 +84,10 @@ class TaigaPlugin(IssuePlugin):
         return bool(self.get_option('taiga_project', project))
 
     def get_new_issue_title(self, **kwargs):
-        return _('Create Taiga Issue')
+        return _('Create Taiga issue')
 
     def create_issue(self, request, group, form_data, **kwargs):
 
-        url = self.get_option('taiga_url', group.project)
         api = self.get_option('taiga_api', group.project)
         username = self.get_option('taiga_username', group.project)
         password = self.get_option('taiga_password', group.project)
@@ -122,10 +128,15 @@ class TaigaPlugin(IssuePlugin):
             'tags': [label.strip() for label in labels.split(",") if label]
             }
 
-        issue = project.add_issue(**data)
+        if self.is_issue(group.project):
+            issue = project.add_issue(**data)
+        else:
+            issue = project.add_user_story(**data)
 
         return issue.ref
 
+    def is_issue(self, project):
+        return self.get_option('taiga_type', project) == 'issue'
 
     def get_issue_label(self, group, issue_id, **kwargs):
         return 'TG-%s' % issue_id
@@ -134,4 +145,7 @@ class TaigaPlugin(IssuePlugin):
         url = self.get_option('taiga_url', group.project)
         slug = self.get_option('taiga_project', group.project)
 
-        return '%s/project/%s/issue/%s' % (url, slug, issue_id)
+        if self.is_issue(group.project):
+            return '%s/project/%s/issue/%s' % (url, slug, issue_id)
+        else:
+            return '%s/project/%s/us/%s' % (url, slug, issue_id)
